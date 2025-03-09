@@ -1,109 +1,70 @@
-
 import { Responsive, WidthProvider } from "react-grid-layout";
 import Ag from "./Ag";
+import { useState } from "react";
+import CustomDialog from "../custom/CustomDialog";
+import FullscreenIcon from "@mui/icons-material/Fullscreen";
+import useLayout from "../hook/useLayout";
+
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 // Sample components
 const CompA = () => <div style={{ background: "#FFD700", height: "100%" }}>Component A</div>;
 const CompB = () => <div style={{ background: "#ADFF2F", height: "100%" }}>Component B</div>;
 const CompC = () => <div style={{ background: "#00CED1", height: "100%" }}>Component C</div>;
-const CompD = () => <div style={{ background: "#FF69B4", height: "100%" }}>Component other data </div>;
-
-
+const CompD = () => <div style={{ background: "#FF69B4", height: "100%" }}>Component other data</div>;
 
 const Layout = () => {
-    const getLayoutsFromSomewhere = () => {
-        // Example layout configuration
-        return {
-            lg: [
-                { i: "1", x: 0, y: 0, w: 6, h: 40, minW: 3, minH: 20, },
-                { i: "2", x: 6, y: 0, w: 6, h: 40, minW: 3, minH: 20, },
-                { i: "3", x: 0, y: 0, w: 6, h: 40, minW: 3, minH: 20, },
-                { i: "4", x: 6, y: 0, w: 6, h: 40, minW: 3, minH: 20, },
-            ],
-            md: [
-                { i: "1", x: 0, y: 0, w: 6, h: 40, minW: 3, minH: 20, },
-                { i: "2", x: 6, y: 0, w: 6, h: 40, minW: 3, minH: 20, },
-                { i: "3", x: 0, y: 0, w: 6, h: 40, minW: 3, minH: 20, },
-                { i: "4", x: 6, y: 0, w: 6, h: 40, minW: 3, minH: 20, },
-            ],
-            sm: [
-                { i: "1", x: 0, y: 0, w: 6, h: 40, minW: 1, minH: 4, },
-                { i: "2", x: 0, y: 0, w: 6, h: 40, minW: 3, minH: 20, },
-                { i: "3", x: 0, y: 0, w: 6, h: 40, minW: 3, minH: 20, },
-                { i: "4", x: 0, y: 0, w: 6, h: 40, minW: 3, minH: 20, },
-            ],
-            xs: [
-                { i: "1", x: 0, y: 0, w: 6, h: 40, minW: 1, minH: 4, },
-                { i: "2", x: 0, y: 0, w: 6, h: 40, minW: 3, minH: 20, },
-                { i: "3", x: 0, y: 0, w: 6, h: 40, minW: 3, minH: 20, },
-                { i: "4", x: 0, y: 0, w: 6, h: 40, minW: 3, minH: 20, },
-            ],
-            xxs: [
-                { i: "1", x: 0, y: 0, w: 6, h: 40, minW: 1, minH: 4, },
-                { i: "2", x: 6, y: 0, w: 6, h: 40, minW: 3, minH: 20, },
-                { i: "3", x: 0, y: 0, w: 6, h: 40, minW: 3, minH: 20, },
-                { i: "4", x: 6, y: 0, w: 6, h: 40, minW: 3, minH: 20, },
-            ],
-        };
-    };
 
-    const layouts = getLayoutsFromSomewhere();
+    const [isFullScreen, setIsFullScreen] = useState(false);
+    const { layouts, handleResizeStart, handleResizeStop, handleDragStart, handleDragStop } = useLayout();
 
+    const [openModal, setOpenModal] = useState(false);
+    const [selectedComponent, setSelectedComponent] = useState<React.ReactNode | null>(null);
 
-    const componentMap: any = {
+    const componentMap: { [key: string]: React.ReactNode } = {
         "1": <Ag />,
         "2": <CompB />,
         "3": <CompC />,
         "4": <CompD />,
     };
 
-    const handleResizeStart = () => {
-        document.querySelector('.layout')?.classList.add('resizing');
+    const handleHeaderClick = (itemId: string) => {
+        setSelectedComponent(componentMap[itemId]); // Set the selected component
+        setOpenModal(true);
     };
-
-    const handleResizeStop = () => {
-        document.querySelector('.layout')?.classList.remove('resizing');
-    };
-
-    const handleDragStart = () => {
-        document.querySelector('.layout')?.classList.add('dragging');
-    };
-
-    const handleDragStop = () => {
-        document.querySelector('.layout')?.classList.remove('dragging');
-    };
-
 
     return (
-        <ResponsiveGridLayout
-            className="layout"
-            rowHeight={1}
-            layouts={layouts}
-            breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
-            cols={{ lg: 12, md: 12, sm: 6, xs: 4, xxs: 2 }}
-            draggableHandle={".grid-header"}
-            onResizeStart={handleResizeStart}
-            onResizeStop={handleResizeStop}
-            onDragStart={handleDragStart}
-            onDragStop={handleDragStop}
-        >
-            {layouts.lg.map((item) => {
-                return (
+        <>
+            <ResponsiveGridLayout
+                className="layout"
+                rowHeight={1}
+                layouts={layouts}
+                breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+                cols={{ lg: 12, md: 12, sm: 6, xs: 4, xxs: 2 }}
+                draggableHandle={".grid-header"}
+                onResizeStart={handleResizeStart}
+                onResizeStop={handleResizeStop}
+                onDragStart={handleDragStart}
+                onDragStop={handleDragStop}
+            >
+                {layouts.lg.map((item) => (
                     <div key={item.i} style={{ display: "flex", flexDirection: "column", height: "100%" }}>
                         {/* Header */}
                         <div
-                            className="grid-header"
+
                             style={{
                                 display: "flex",
                                 justifyContent: "space-between",
                                 alignItems: "center",
                                 backgroundColor: "#fff",
-                                height: "30px", // Fixed header height
-                                cursor: "move",
+                                height: "30px",
                             }}
                         >
-                            <div>Header {item.i}</div>
+                            <div className="grid-header" style={{ cursor: "move" }}>Header {item.i}</div>
+
+                            <div onClick={() => handleHeaderClick(item.i)}> {/* Pass item.i */}
+                                <FullscreenIcon />
+                            </div>
                         </div>
 
                         {/* Content (Fills remaining space) */}
@@ -111,11 +72,28 @@ const Layout = () => {
                             {componentMap[item.i]}
                         </div>
                     </div>
-                );
-            })}
+                ))}
+            </ResponsiveGridLayout>
 
-        </ResponsiveGridLayout>
+            {/* Custom Dialog with the selected component */}
+            <CustomDialog
+                title="Modal Title"
+                open={openModal}
+                onClose={() => setOpenModal(false)}
+                isDraggable={true}
+                height="400px" // This height is used when the modal is not fullscreen
+                isFullScreenButtonVisible={true}
+                fullScreen={isFullScreen}
+                onFullScreenChange={(newFullScreenState) => setIsFullScreen(newFullScreenState)}
+            >
+                {selectedComponent}
+            </CustomDialog>
+
+
+        </>
     );
 };
 
 export default Layout;
+
+

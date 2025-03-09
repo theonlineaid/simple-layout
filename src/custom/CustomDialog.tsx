@@ -21,6 +21,8 @@ interface CustomDialogProps {
     onClose: () => void;
     onFullScreenChange?: (isFullScreen: boolean) => void;
     fullScreen?: boolean;
+    // New prop for setting specific height for small modals
+    height?: string | number;
 }
 
 const PaperComponent: React.FC = (props) => (
@@ -49,6 +51,7 @@ const CustomDialog: React.FC<CustomDialogProps> = ({
     onClose,
     onFullScreenChange,
     fullScreen = false,
+    height = "auto", // Default height is 'auto'
 }) => {
     const [isFullScreen, setIsFullScreen] = useState(fullScreen);
 
@@ -82,6 +85,15 @@ const CustomDialog: React.FC<CustomDialogProps> = ({
         [isDraggable, isFullScreen]
     );
 
+    // Set dynamic styles for the modal height based on fullscreen state
+    const headerHeight = 50; // Fixed header height
+
+    const dialogStyles = useMemo(() => ({
+        height: isFullScreen ? `calc(97vh - ${headerHeight}px)` : height, // Subtract header height in fullscreen
+        overflowY: "auto", // Always enable scroll
+        maxHeight: isFullScreen ? `calc(97vh - ${headerHeight}px)` : "none", // Prevent fullscreen dialog from exceeding viewport height
+    }), [isFullScreen, height]);
+
     return (
         <Dialog
             fullScreen={isFullScreen}
@@ -90,7 +102,6 @@ const CustomDialog: React.FC<CustomDialogProps> = ({
             open={open}
             onClose={handleClose}
             PaperComponent={isDraggable && !isFullScreen ? PaperComponent : undefined}
-            //   TransitionComponent={Transition}
             slots={{ transition: Transition }}
             disableEscapeKeyDown
             aria-labelledby="draggable-dialog-title"
@@ -107,6 +118,7 @@ const CustomDialog: React.FC<CustomDialogProps> = ({
                         alignItems: "center",
                         justifyContent: "space-between",
                         mb: 1,
+                        height: headerHeight,
                     }}
                 >
                     <DialogTitle
@@ -127,7 +139,9 @@ const CustomDialog: React.FC<CustomDialogProps> = ({
                         </IconButton>
                     </Box>
                 </Box>
-                <DialogContent sx={{ p: 0 }}>{children}</DialogContent>
+                <DialogContent sx={{ p: 0 }} style={dialogStyles as React.CSSProperties}>
+                    {children}
+                </DialogContent>
             </Box>
         </Dialog>
     );
