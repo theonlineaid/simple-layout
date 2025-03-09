@@ -58,6 +58,22 @@ const Layout = () => {
         "4": <CompD />,
     };
 
+    const handleResizeStart = () => {
+        document.querySelector('.layout')?.classList.add('resizing');
+    };
+
+    const handleResizeStop = () => {
+        document.querySelector('.layout')?.classList.remove('resizing');
+    };
+
+    const handleDragStart = () => {
+        document.querySelector('.layout')?.classList.add('dragging');
+    };
+
+    const handleDragStop = () => {
+        document.querySelector('.layout')?.classList.remove('dragging');
+    };
+
 
     return (
         <ResponsiveGridLayout
@@ -66,14 +82,38 @@ const Layout = () => {
             layouts={layouts}
             breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
             cols={{ lg: 12, md: 12, sm: 6, xs: 4, xxs: 2 }}
+            draggableHandle={".grid-header"}
+            onResizeStart={handleResizeStart}
+            onResizeStop={handleResizeStop}
+            onDragStart={handleDragStart}
+            onDragStop={handleDragStop}
         >
             {layouts.lg.map((item) => {
+                return (
+                    <div key={item.i} style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+                        {/* Header */}
+                        <div
+                            className="grid-header"
+                            style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                backgroundColor: "#fff",
+                                height: "30px", // Fixed header height
+                                cursor: "move",
+                            }}
+                        >
+                            <div>Header {item.i}</div>
+                        </div>
 
-                return <div key={item.i} style={{ background: "#ccc" }}>
-                    {componentMap[item.i]}
-                </div>
-
+                        {/* Content (Fills remaining space) */}
+                        <div style={{ height: "calc(100% - 30px)", overflow: "hidden" }}>
+                            {componentMap[item.i]}
+                        </div>
+                    </div>
+                );
             })}
+
         </ResponsiveGridLayout>
     );
 };
