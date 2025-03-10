@@ -38,7 +38,6 @@ ModuleRegistry.registerModules([
 const Ag = () => {
   const containerStyle = useMemo(() => ({ width: "100%", height: "100%" }), []);
   const gridStyle = useMemo(() => ({ height: "100%", width: "100%" }), []);
-  const menuRef = useRef<HTMLDivElement>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRowData, setSelectedRowData] = useState<any>(null);
   const [contextMenu, setContextMenu] = useState<{
@@ -95,16 +94,16 @@ const Ag = () => {
     setIsModalOpen(true);
   }, []);
 
-  const rowSelection = useMemo<RowSelectionOptions | "single" | "multiple">(
-    () => ({
-      mode: "singleRow",
-      checkboxes: false,
-      enableClickSelection: true,
-      enableSelectionWithoutKeys: true,
-      enableRightClickSelection: true,
-    }),
-    []
-  );
+  // const rowSelection = useMemo<RowSelectionOptions | "single" | "multiple">(
+  //   () => ({
+  //     mode: "singleRow",
+  //     checkboxes: false,
+  //     enableClickSelection: true,
+  //     enableSelectionWithoutKeys: true,
+  //     enableRightClickSelection: true,
+  //   }),
+  //   []
+  // );
 
   const onCellContextMenu = useCallback((event: any) => {
     event.event.preventDefault();
@@ -135,19 +134,22 @@ const Ag = () => {
     handleMenuClose();
   };
 
+  const onCellDoubleClicked = useCallback((event: any) => {
+    setSelectedRowData(event.data);
+    setIsModalOpen(true);
+  }, []);
+
   return (
     <>
 
       <div style={containerStyle}>
         <div style={gridStyle} onContextMenu={handleContextMenu}>
           <AgGridReact<IOlympicData>
-            rowDragManaged={true}
-            suppressRowDrag={true}
             rowData={rowData}
             columnDefs={columnDefs}
             defaultColDef={defaultColDef}
-            // multiSortKey={"ctrl"} // Allow multi-column sorting with Ctrl key
-            rowSelection={rowSelection}
+            onCellDoubleClicked={onCellDoubleClicked}
+            // rowSelection={rowSelection}
             onCellContextMenu={onCellContextMenu}
             onGridReady={onGridReady}
           />
@@ -173,7 +175,6 @@ const Ag = () => {
       )}
 
       <CustomMenu
-        ref={menuRef}
         contextMenu={contextMenu}
         handleMenuClose={handleMenuClose}
         selectedRowData={selectedRowData}

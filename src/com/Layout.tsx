@@ -8,7 +8,6 @@ import useLayout from "../hook/useLayout";
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 // Sample components
-const CompA = () => <div style={{ background: "#FFD700", height: "100%" }}>Component A</div>;
 const CompB = () => <div style={{ background: "#ADFF2F", height: "100%" }}>Component B</div>;
 const CompC = () => <div style={{ background: "#00CED1", height: "100%" }}>Component C</div>;
 const CompD = () => <div style={{ background: "#FF69B4", height: "100%" }}>Component other data</div>;
@@ -61,6 +60,12 @@ const Layout = () => {
                             }}
                         >
                             <div className="grid-header" style={{ cursor: "move" }}>Header {item.i}</div>
+
+                            {item.i === "1" && (
+                                <div style={{ display: "flex", alignItems: "center" }}>
+                                    tab
+                                </div>
+                            )}
 
                             <div onClick={() => handleHeaderClick(item.i)}> {/* Pass item.i */}
                                 <FullscreenIcon />
