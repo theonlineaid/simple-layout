@@ -13,12 +13,12 @@ const CompC = () => <div style={{ background: "#00CED1", height: "100%" }}>Compo
 const CompD = () => <div style={{ background: "#FF69B4", height: "100%" }}>Component other data</div>;
 
 const Layout = () => {
-
     const [isFullScreen, setIsFullScreen] = useState(false);
     const { layouts, handleResizeStart, handleResizeStop, handleDragStart, handleDragStop } = useLayout();
 
     const [openModal, setOpenModal] = useState(false);
     const [selectedComponent, setSelectedComponent] = useState<React.ReactNode | null>(null);
+    const [isAnotherModalOpen, setIsAnotherModalOpen] = useState(false); // Track nested modals
 
     const componentMap: { [key: string]: React.ReactNode } = {
         "1": <Ag />,
@@ -28,8 +28,11 @@ const Layout = () => {
     };
 
     const handleHeaderClick = (itemId: string) => {
-        setSelectedComponent(componentMap[itemId]); // Set the selected component
-        setOpenModal(true);
+        if (!isAnotherModalOpen) { // Prevent opening another modal if one is already open
+            setSelectedComponent(componentMap[itemId]);
+            setOpenModal(true);
+            setIsAnotherModalOpen(true); // Set modal as open
+        }
     };
 
     return (
@@ -50,7 +53,6 @@ const Layout = () => {
                     <div key={item.i} style={{ display: "flex", flexDirection: "column", height: "100%" }}>
                         {/* Header */}
                         <div
-
                             style={{
                                 display: "flex",
                                 justifyContent: "space-between",
@@ -67,12 +69,12 @@ const Layout = () => {
                                 </div>
                             )}
 
-                            <div onClick={() => handleHeaderClick(item.i)}> {/* Pass item.i */}
+                            <div onClick={() => handleHeaderClick(item.i)}>
                                 <FullscreenIcon />
                             </div>
                         </div>
 
-                        {/* Content (Fills remaining space) */}
+                        {/* Content */}
                         <div style={{ height: "calc(100% - 30px)", overflow: "hidden" }}>
                             {componentMap[item.i]}
                         </div>
@@ -84,21 +86,20 @@ const Layout = () => {
             <CustomDialog
                 title="Modal Title"
                 open={openModal}
-                onClose={() => setOpenModal(false)}
-                isDraggable={true}
-                height="400px" // This height is used when the modal is not fullscreen
+                onClose={() => {
+                    setOpenModal(false);
+                    setIsAnotherModalOpen(false); // Reset when closing
+                }}
+                isDraggable={!isAnotherModalOpen} // Disable dragging for nested modals
+                height="400px"
                 isFullScreenButtonVisible={true}
                 fullScreen={isFullScreen}
                 onFullScreenChange={(newFullScreenState) => setIsFullScreen(newFullScreenState)}
             >
                 {selectedComponent}
             </CustomDialog>
-
-
         </>
     );
 };
 
 export default Layout;
-
-

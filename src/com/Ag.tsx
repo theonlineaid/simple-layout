@@ -164,7 +164,8 @@ const Ag = () => {
           onClose={handleCloseModal}
           isFullScreenButtonVisible
           maxWidth="sm"
-          isDraggable
+          //  height="300px"
+          isDraggable={true}
         >
           <div>
             {selectedRowData && (
