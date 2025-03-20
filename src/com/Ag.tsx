@@ -14,6 +14,7 @@ import {
 } from "ag-grid-community";
 import CustomMenu from "../custom/CustomMenu";
 import CustomDialog from "../custom/CustomDialog";
+import SimpleBar from "simplebar-react";
 
 interface IOlympicData {
   athlete: string;
@@ -144,15 +145,23 @@ const Ag = () => {
 
       <div style={containerStyle}>
         <div style={gridStyle} onContextMenu={handleContextMenu}>
-          <AgGridReact<IOlympicData>
-            rowData={rowData}
-            columnDefs={columnDefs}
-            defaultColDef={defaultColDef}
-            onCellDoubleClicked={onCellDoubleClicked}
-            // rowSelection={rowSelection}
-            onCellContextMenu={onCellContextMenu}
-            onGridReady={onGridReady}
-          />
+          {/* <SimpleBar
+            style={{
+              maxHeight: "93vh",
+            }}
+            forceVisible="y"
+            autoHide={true}
+          > */}
+            <AgGridReact<IOlympicData>
+              rowData={rowData}
+              columnDefs={columnDefs}
+              defaultColDef={defaultColDef}
+              onCellDoubleClicked={onCellDoubleClicked}
+              // rowSelection={rowSelection}
+              onCellContextMenu={onCellContextMenu}
+              onGridReady={onGridReady}
+            />
+          {/* </SimpleBar> */}
         </div>
       </div>
 

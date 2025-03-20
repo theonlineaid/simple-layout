@@ -9,9 +9,21 @@ import "react-resizable/css/styles.css"
 // import "ag-grid-community/styles/ag-theme-balham.css";
 // import "ag-grid-community/styles/ag-theme-material.css";
 // import "ag-grid-community/styles/ag-theme-alpine.css";
+import 'simplebar-react/dist/simplebar.min.css';
+import SettingsProvider from './contexts/SettingsContext.tsx'
+import ThemeSettings from './com/settings/index.tsx'
+import 'simplebar-react/dist/simplebar.min.css';
+import ThemeProvider from './theme/index.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <SettingsProvider>
+      <ThemeProvider>
+        <ThemeSettings>
+          <App />
+        </ThemeSettings>
+      </ThemeProvider>
+    </SettingsProvider>
+
   </StrictMode>,
 )
