@@ -2,8 +2,9 @@ import { Responsive, WidthProvider } from "react-grid-layout";
 import Ag from "./Ag";
 import { useState } from "react";
 import CustomDialog from "../custom/CustomDialog";
-import FullscreenIcon from "@mui/icons-material/Fullscreen";
+// import FullscreenIcon from "@mui/icons-material/Fullscreen";
 import useLayout from "../hook/useLayout";
+import BasicHeader from "./BasicHeader";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -52,7 +53,9 @@ const Layout = () => {
                 {layouts.lg.map((item) => (
                     <div key={item.i} style={{ display: "flex", flexDirection: "column", height: "100%" }}>
                         {/* Header */}
-                        <div
+                        <BasicHeader title={`Header ${item.i}`} item={item} handleHeaderClick={handleHeaderClick} />
+
+                        {/* <div
                             style={{
                                 display: "flex",
                                 justifyContent: "space-between",
@@ -72,7 +75,7 @@ const Layout = () => {
                             <div onClick={() => handleHeaderClick(item.i)}>
                                 <FullscreenIcon />
                             </div>
-                        </div>
+                        </div> */}
 
                         {/* Content */}
                         <div style={{ height: "calc(100% - 30px)", overflow: "hidden" }}>
