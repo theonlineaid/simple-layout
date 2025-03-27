@@ -1,4 +1,3 @@
-
 import { useCallback, useMemo, useRef, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 
@@ -36,7 +35,7 @@ ModuleRegistry.registerModules([
   ValidationModule, // Optional module for validation
 ]);
 
-const Ag = () => {
+const Ag = ({ theme }: any) => {
   const containerStyle = useMemo(() => ({ width: "100%", height: "100%" }), []);
   const gridStyle = useMemo(() => ({ height: "100%", width: "100%" }), []);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -63,9 +62,12 @@ const Ag = () => {
   ]);
 
   // Default column configuration
-  const defaultColDef = useMemo<ColDef>(() => ({
-    width: 300, // default column width
-  }), []);
+  const defaultColDef = useMemo<ColDef>(
+    () => ({
+      width: 300, // default column width
+    }),
+    []
+  );
 
   // Fetch data on grid readiness
   const onGridReady = useCallback((params: GridReadyEvent) => {
@@ -142,8 +144,7 @@ const Ag = () => {
 
   return (
     <>
-
-      <div style={containerStyle}>
+      <div style={containerStyle} className={`ag-theme-${theme}-dark`}>
         <div style={gridStyle} onContextMenu={handleContextMenu}>
           {/* <SimpleBar
             style={{
@@ -152,19 +153,18 @@ const Ag = () => {
             forceVisible="y"
             autoHide={true}
           > */}
-            <AgGridReact<IOlympicData>
-              rowData={rowData}
-              columnDefs={columnDefs}
-              defaultColDef={defaultColDef}
-              onCellDoubleClicked={onCellDoubleClicked}
-              // rowSelection={rowSelection}
-              onCellContextMenu={onCellContextMenu}
-              onGridReady={onGridReady}
-            />
+          <AgGridReact<IOlympicData>
+            rowData={rowData}
+            columnDefs={columnDefs}
+            defaultColDef={defaultColDef}
+            onCellDoubleClicked={onCellDoubleClicked}
+            // rowSelection={rowSelection}
+            onCellContextMenu={onCellContextMenu}
+            onGridReady={onGridReady}
+          />
           {/* </SimpleBar> */}
         </div>
       </div>
-
 
       {isModalOpen && (
         <CustomDialog
