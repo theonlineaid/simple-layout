@@ -6,6 +6,11 @@ import FullscreenIcon from "@mui/icons-material/Fullscreen";
 import useLayout from "../hook/useLayout";
 import AgTheme from "./AgTheme";
 import { AppBar, Toolbar } from "@mui/material";
+import AddTab from "./tab/AddTab";
+import { removeTabName } from "../redux/slice/addTabName";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../redux/store";
+import { setActiveTab } from "../redux/slice/activeTab";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -37,7 +42,14 @@ const Layout = () => {
     useState<React.ReactNode | null>(null);
   const [isAnotherModalOpen, setIsAnotherModalOpen] = useState(false); // Track nested modals
   const [theme, setTheme] = useState<string>("none");
+  const tabNames = useSelector((state: RootState) => state.addTabName);
+  const activeTab = useSelector((state: RootState) => state.activeTab.id);
 
+  const dispatch = useDispatch();
+
+  const handleTabClick = (tabId: string) => {
+    dispatch(setActiveTab(tabId));
+  };
   const componentMap: { [key: string]: React.ReactNode } = {
     "1": <Ag theme={theme} />,
     "2": <Ag theme={theme} />,
@@ -93,7 +105,26 @@ const Layout = () => {
                   <div className="grid-header" style={{ cursor: "move" }}>
                     Header {item.i}
                   </div>
-                  {item.i === "1" && <div>tab</div>}
+                  {item.i === "1" && (
+                    <div>
+                      <ul>
+                        {tabNames.map((tab: any) => (
+                          <li
+                            key={tab.id}
+                            onClick={() => handleTabClick(tab.id)}
+                          >
+                            {tab.name}
+                            <button
+                              onClick={() => dispatch(removeTabName(tab.id))}
+                            >
+                              ❌
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  <AddTab />
                 </div>
 
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>

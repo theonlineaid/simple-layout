@@ -13,7 +13,8 @@ import {
 } from "ag-grid-community";
 import CustomMenu from "../custom/CustomMenu";
 import CustomDialog from "../custom/CustomDialog";
-import SimpleBar from "simplebar-react";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
 
 interface IOlympicData {
   athlete: string;
@@ -35,7 +36,8 @@ ModuleRegistry.registerModules([
   ValidationModule, // Optional module for validation
 ]);
 
-const Ag = ({ theme }: any) => {
+const Ag = ({ theme }: { theme: string }) => {
+  const activeTab = useSelector((state: RootState) => state.activeTab.id);
   const containerStyle = useMemo(() => ({ width: "100%", height: "100%" }), []);
   const gridStyle = useMemo(() => ({ height: "100%", width: "100%" }), []);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -146,13 +148,6 @@ const Ag = ({ theme }: any) => {
     <>
       <div style={containerStyle} className={`ag-theme-${theme}-dark`}>
         <div style={gridStyle} onContextMenu={handleContextMenu}>
-          {/* <SimpleBar
-            style={{
-              maxHeight: "93vh",
-            }}
-            forceVisible="y"
-            autoHide={true}
-          > */}
           <AgGridReact<IOlympicData>
             rowData={rowData}
             columnDefs={columnDefs}
@@ -162,7 +157,6 @@ const Ag = ({ theme }: any) => {
             onCellContextMenu={onCellContextMenu}
             onGridReady={onGridReady}
           />
-          {/* </SimpleBar> */}
         </div>
       </div>
 
