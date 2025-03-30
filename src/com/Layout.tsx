@@ -11,6 +11,7 @@ import { removeTabName } from "../redux/slice/addTabName";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { setActiveTab } from "../redux/slice/activeTab";
+import { clearTab } from "../redux/slice/addToTab";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -43,11 +44,14 @@ const Layout = () => {
   const [isAnotherModalOpen, setIsAnotherModalOpen] = useState(false); // Track nested modals
   const [theme, setTheme] = useState<string>("none");
   const tabNames = useSelector((state: RootState) => state.addTabName);
-  const activeTab = useSelector((state: RootState) => state.activeTab.id);
+  const addToTab = useSelector((state: RootState) => state.addToTab);
+
+  console.log(addToTab);
 
   const dispatch = useDispatch();
 
   const handleTabClick = (tabId: string) => {
+    console.log("Active Tab Changed:", tabId); // Debugging log
     dispatch(setActiveTab(tabId));
   };
   const componentMap: { [key: string]: React.ReactNode } = {
@@ -107,7 +111,13 @@ const Layout = () => {
                   </div>
                   {item.i === "1" && (
                     <div>
-                      <ul>
+                      <ul
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          listStyle: "none",
+                        }}
+                      >
                         {tabNames.map((tab: any) => (
                           <li
                             key={tab.id}
@@ -115,7 +125,10 @@ const Layout = () => {
                           >
                             {tab.name}
                             <button
-                              onClick={() => dispatch(removeTabName(tab.id))}
+                              onClick={() => {
+                                dispatch(removeTabName(tab.id)); // First dispatch
+                                dispatch(clearTab()); // Second dispatch
+                              }}
                             >
                               ❌
                             </button>

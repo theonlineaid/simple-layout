@@ -1,20 +1,23 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState, useEffect } from "react";
 import { AgGridReact } from "ag-grid-react";
-
 import {
   ClientSideRowModelModule,
   ColDef,
   ColumnApiModule,
-  ColumnState,
-  GridReadyEvent,
-  ModuleRegistry,
-  RowSelectionOptions,
   ValidationModule,
+  ModuleRegistry,
 } from "ag-grid-community";
 import CustomMenu from "../custom/CustomMenu";
 import CustomDialog from "../custom/CustomDialog";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
+
+// Register the required modules for ag-Grid
+ModuleRegistry.registerModules([
+  ColumnApiModule,
+  ClientSideRowModelModule,
+  ValidationModule,
+]);
 
 interface IOlympicData {
   athlete: string;
@@ -29,15 +32,9 @@ interface IOlympicData {
   total: number;
 }
 
-// Register the required modules for ag-Grid
-ModuleRegistry.registerModules([
-  ColumnApiModule,
-  ClientSideRowModelModule,
-  ValidationModule, // Optional module for validation
-]);
-
 const Ag = ({ theme }: { theme: string }) => {
   const activeTab = useSelector((state: RootState) => state.activeTab.id);
+  const addToTab = useSelector((state: RootState) => state.addToTab);
   const containerStyle = useMemo(() => ({ width: "100%", height: "100%" }), []);
   const gridStyle = useMemo(() => ({ height: "100%", width: "100%" }), []);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -48,8 +45,8 @@ const Ag = ({ theme }: { theme: string }) => {
   } | null>(null);
 
   const gridRef = useRef<AgGridReact>(null);
-  // State for rowData (Olympic data) and columnDefs (grid columns definition)
-  const [rowData, setRowData] = useState<IOlympicData[]>();
+  const [rowData, setRowData] = useState<IOlympicData[]>([]);
+  const [filteredRowData, setFilteredRowData] = useState<IOlympicData[]>([]);
   const [columnDefs, setColumnDefs] = useState<ColDef[]>([
     { field: "athlete" },
     { field: "age", width: 100 },
@@ -63,27 +60,31 @@ const Ag = ({ theme }: { theme: string }) => {
     { field: "total" },
   ]);
 
-  // Default column configuration
-  const defaultColDef = useMemo<ColDef>(
-    () => ({
-      width: 300, // default column width
-    }),
-    []
-  );
+  const defaultColDef = useMemo<ColDef>(() => ({ width: 300 }), []);
 
-  // Fetch data on grid readiness
-  const onGridReady = useCallback((params: GridReadyEvent) => {
+  // Fetch data on mount
+  useEffect(() => {
     fetch("https://www.ag-grid.com/example-assets/olympic-winners.json")
       .then((resp) => resp.json())
       .then((data: IOlympicData[]) => setRowData(data));
-
-    // Apply default sorting state (sorting first by country, then by athlete)
-    const defaultSortModel: ColumnState[] = [
-      { colId: "country", sort: "asc", sortIndex: 0 },
-      { colId: "athlete", sort: "asc", sortIndex: 1 },
-    ];
-    params.api.applyColumnState({ state: defaultSortModel });
   }, []);
+
+  // Filter data based on activeTab or addToTab
+  useEffect(() => {
+    if (rowData.length > 0) {
+      const filteredData =
+        addToTab.length > 0
+          ? rowData.filter((row) => {
+              // Assuming 'athlete' is the key to match for filtering
+              return addToTab.some(
+                (tabItem) => tabItem.athlete === row.athlete
+              );
+            })
+          : rowData; // If addToTab is empty, return all data
+
+      setFilteredRowData(filteredData);
+    }
+  }, [addToTab, rowData]);
 
   const handleContextMenu = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -98,17 +99,6 @@ const Ag = ({ theme }: { theme: string }) => {
     setSelectedRowData(rowData);
     setIsModalOpen(true);
   }, []);
-
-  // const rowSelection = useMemo<RowSelectionOptions | "single" | "multiple">(
-  //   () => ({
-  //     mode: "singleRow",
-  //     checkboxes: false,
-  //     enableClickSelection: true,
-  //     enableSelectionWithoutKeys: true,
-  //     enableRightClickSelection: true,
-  //   }),
-  //   []
-  // );
 
   const onCellContextMenu = useCallback((event: any) => {
     event.event.preventDefault();
@@ -149,13 +139,11 @@ const Ag = ({ theme }: { theme: string }) => {
       <div style={containerStyle} className={`ag-theme-${theme}-dark`}>
         <div style={gridStyle} onContextMenu={handleContextMenu}>
           <AgGridReact<IOlympicData>
-            rowData={rowData}
+            rowData={filteredRowData}
             columnDefs={columnDefs}
             defaultColDef={defaultColDef}
             onCellDoubleClicked={onCellDoubleClicked}
-            // rowSelection={rowSelection}
             onCellContextMenu={onCellContextMenu}
-            onGridReady={onGridReady}
           />
         </div>
       </div>
@@ -167,7 +155,6 @@ const Ag = ({ theme }: { theme: string }) => {
           onClose={handleCloseModal}
           isFullScreenButtonVisible
           maxWidth="sm"
-          //  height="300px"
           isDraggable={true}
         >
           <div>
@@ -187,4 +174,5 @@ const Ag = ({ theme }: { theme: string }) => {
     </>
   );
 };
+
 export default Ag;

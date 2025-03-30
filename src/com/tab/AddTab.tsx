@@ -1,33 +1,43 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { addTabName, clearAllTabNames } from "../../redux/slice/addTabName";
+import { addTabName } from "../../redux/slice/addTabName";
+import AddIcon from "@mui/icons-material/Add";
+import { IconButton } from "@mui/material";
+import AddLoadingIconButton from "./AddIcon";
 
 const AddTab: React.FC = () => {
   const dispatch = useDispatch();
-
+  const [showInput, setShowInput] = useState(false);
   const [input, setInput] = useState("");
 
   return (
-    <div>
-      <input
-        type="text"
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        placeholder="Enter Tab Name"
-      />
-      <button
-        onClick={() => {
-          if (input.trim()) {
-            dispatch(addTabName(input));
-            setInput("");
-          }
-        }}
-      >
-        Add Tab Name
-      </button>
-      <button onClick={() => dispatch(clearAllTabNames())}>
-        Clear All Tabs
-      </button>
+    <div style={{ display: "flex" }}>
+      <div onClick={() => setShowInput(!showInput)} style={{ color: "#fff" }}>
+        {showInput ? "❌" : <AddLoadingIconButton />}
+      </div>
+      {showInput && (
+        <div>
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Enter Tab Name"
+          />
+          <IconButton
+            onClick={() => {
+              if (input.trim()) {
+                dispatch(addTabName(input));
+                setInput("");
+                setShowInput(false);
+              }
+            }}
+            aria-label="add"
+            size="small"
+          >
+            <AddIcon sx={{ color: "#fff" }} />
+          </IconButton>
+        </div>
+      )}
     </div>
   );
 };
