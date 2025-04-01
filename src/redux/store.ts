@@ -5,6 +5,8 @@ import { persistReducer, persistStore } from 'redux-persist';
 import addToTabReducer from './slice/addToTab';
 import addTabNameReducer from './slice/addTabName';
 import activeTabReducer from './slice/activeTab';
+import marketDepthReducer from './slice/marketDepth'
+
 
 // Define persist configurations for both slices
 const persistConfig = {
@@ -17,6 +19,7 @@ const rootReducer = combineReducers({
     addTabName: addTabNameReducer,
     addToTab: addToTabReducer,
     activeTab: activeTabReducer,
+    marketDepth: marketDepthReducer,
 });
 
 // Wrap the root reducer with persistReducer

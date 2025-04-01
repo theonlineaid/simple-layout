@@ -12,10 +12,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { setActiveTab } from "../redux/slice/activeTab";
 import { clearTab } from "../redux/slice/addToTab";
+import MarketDepth from "./MarketDepth";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
-// Sample components
 const CompB = () => (
   <div style={{ background: "#ADFF2F", height: "100%" }}>Component B</div>
 );
@@ -24,7 +24,7 @@ const CompC = () => (
 );
 const CompD = () => (
   <div style={{ background: "#FF69B4", height: "100%" }}>
-    Component other data
+    <MarketDepth />
   </div>
 );
 
