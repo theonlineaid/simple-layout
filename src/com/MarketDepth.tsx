@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import { RootState } from "../redux/store";
 import { toggleReversed } from "../redux/slice/marketDepth";
+import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 
 const MarketDepth = () => {
   const dispatch = useDispatch();
@@ -36,7 +37,7 @@ const MarketDepth = () => {
   return (
     <div style={{ textAlign: "center" }}>
       <Button variant="contained" onClick={() => dispatch(toggleReversed())}>
-        Swap Positions
+        <SwapHorizIcon />
       </Button>
       <div
         style={{
@@ -47,7 +48,7 @@ const MarketDepth = () => {
         }}
       >
         {/* Buy Orders */}
-        <Card sx={{ minWidth: "50%", backgroundColor: "#e0ffe0" }}>
+        <Card sx={{ backgroundColor: "#e0ffe0" }}>
           <CardContent>
             <Typography variant="h6" color="green" gutterBottom>
               Buy Orders
@@ -76,7 +77,7 @@ const MarketDepth = () => {
         </Card>
 
         {/* Sell Orders */}
-        <Card sx={{ minWidth: "50%", backgroundColor: "#ffe0e0" }}>
+        <Card sx={{ backgroundColor: "#ffe0e0" }}>
           <CardContent>
             <Typography variant="h6" color="red" gutterBottom>
               Sell Orders

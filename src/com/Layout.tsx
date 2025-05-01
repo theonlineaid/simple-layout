@@ -13,6 +13,7 @@ import { RootState } from "../redux/store";
 import { setActiveTab } from "../redux/slice/activeTab";
 import { clearTab } from "../redux/slice/addToTab";
 import MarketDepth from "./MarketDepth";
+import DragHandleIcon from "@mui/icons-material/DragHandle";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -107,8 +108,9 @@ const Layout = () => {
               >
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                   <div className="grid-header" style={{ cursor: "move" }}>
-                    Header {item.i}
+                    <DragHandleIcon />
                   </div>
+                  <div>Header {item.i}</div>
                   {item.i === "1" && (
                     <div>
                       <ul
